@@ -1,0 +1,5 @@
+- name: Deploy NAS
+  hosts: nas
+  user: root
+  roles:
+    - common
