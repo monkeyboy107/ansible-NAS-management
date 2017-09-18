@@ -1,0 +1,45 @@
+- name: Install base packages
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - epel-release
+
+- name: Install common utils packages that need stay up to date at all times
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - bash
+
+- name: Install common utils packages
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - yum-utils
+    - libselinux-python
+    - unzip
+    - yum
+    - tmux
+    - tree
+    - xz
+    - python-pip
+    - nano
+    - htop
+    - iotop
+    - iftop
+    - vim
+
+- name: Install common python packages
+  pip:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - pexpect
+
+- name: Configure SELinux
+  selinux:
+    policy: targeted
+    state: permissive
+

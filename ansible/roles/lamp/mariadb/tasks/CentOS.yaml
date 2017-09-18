@@ -1,0 +1,24 @@
+- name: Install common packages
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - mariadb-server
+
+- name: Setup services
+  service:
+    name: '{{ item }}'
+    state: started
+    enabled: true
+  with_items:
+    mariadb
+
+- name: Install extra packages
+  package:
+    name: '{{ item }}'
+    state: latest
+  with_items:
+    - mariadb
+    - percona-xtrabackup
+    - MySQL-python
+

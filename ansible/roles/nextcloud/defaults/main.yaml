@@ -1,0 +1,12 @@
+nextcloud_zip:
+  url: https://download.nextcloud.com/server/releases/latest.zip
+  md5: https://download.nextcloud.com/server/releases/latest.zip.md5
+
+nextcloud_db:
+  database: nextcloud
+  username: nextcloud
+  password: nextcloud
+
+nextcloud_admin:
+  username: admin
+  password: AdminPassword

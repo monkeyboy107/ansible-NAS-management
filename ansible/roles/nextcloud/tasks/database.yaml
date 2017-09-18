@@ -1,0 +1,19 @@
+- name: Create nextcloud database
+  mysql_db:
+    login_user: root
+    login_password: '{{ mariadb.root.password }}'
+    name: '{{ nextcloud_db.database }}'
+    state: present
+
+- name: Setup database user
+  mysql_user:
+    login_user:     'root'
+    login_password: '{{ mariadb.root.password }}'
+    name:           '{{ nextcloud_db.username }}'
+    password:       '{{ nextcloud_db.password }}'
+    priv:           '{{ nextcloud_db.database }}.*:ALL'
+    encrypted: false
+    state:     present
+    host: "{{ item }}"
+  with_items: '{{ mariadb.hosts }}'
+

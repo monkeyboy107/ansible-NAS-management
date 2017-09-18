@@ -1,0 +1,28 @@
+- name: Download nextcloud zip
+  get_url:
+    url:      '{{ nextcloud_zip.url }}'
+    dest:     '/opt/nextcloud.zip'
+    #checksum: 'md5:{{ nextcloud_zip.md5 }}'
+  notify:
+    - Reload apache
+    - Install nextcloud
+
+- name: Extract zip
+  unarchive:
+    src:  '/opt/nextcloud.zip'
+    dest: '/var/www/html/'
+    remote_src: true
+  notify:
+    - Reload apache
+
+- name: Setup perms
+  file:
+    path: /var/www/html
+    owner: apache
+    group: apache
+    recurse: true
+
+- name: Cleanup zip
+  file:
+    path: /opt/nextcloud.zip
+    state: absent

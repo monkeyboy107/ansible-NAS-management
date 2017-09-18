@@ -1,0 +1,11 @@
+- name: Reload apache
+  shell: |
+    if pidof httpd
+    then
+      source /etc/sysconfig/httpd
+      httpd $OPTIONS -k graceful
+    fi
+
+- name: Enable REMI
+  shell: |
+    yum-config-manager --enable remi-php70

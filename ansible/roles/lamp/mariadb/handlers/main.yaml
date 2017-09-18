@@ -1,0 +1,16 @@
+#- name: Wait for mariadb
+#  pause:
+#    seconds: 10
+#
+#- name: mysql_secure_installation
+#  expect:
+#    command: mysql_secure_installation
+#    responses:
+#      'Enter current password for root (enter for none)*': "\r"
+#      'Change the root password*': 'y\r'
+#      'New password*': '{{ mariadb.root.password }}\r'
+#      'Re-enter new password*': '{{ mariadb.root.password }}\r'
+#      'Remove anonymous users*': 'y\r'
+#      'Disallow root login remotely*': 'y\r'
+#      'Remove test database and access to it*': 'y\r'
+#      'Reload privilege tables now*': 'y\r'
