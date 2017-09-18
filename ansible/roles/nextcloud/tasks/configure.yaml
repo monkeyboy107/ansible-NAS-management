@@ -1,0 +1,44 @@
+- name: Add nextcloud directory to path
+  lineinfile:
+    path: /etc/profile
+    line: 'PATH=${PATH}:/var/www/html/nextcloud'
+
+- name: Setup occ perms
+  file:
+    path: /var/www/html/nextcloud/occ
+    mode: 0700
+
+- name: Create ncc script
+  template:
+    src: ncc.sh
+    dest: /usr/bin/ncc
+    mode: 0700
+
+- name: Enable apps
+  shell: |
+    if ncc app:list | grep Disabled -A 255 | grep {{ item }} || ncc app:list | grep -E '{{ item }}'
+    then
+      ncc app:enable {{ item }} && echo changed
+    fi
+  register: ncc_app
+  changed_when: '"changed" in ncc_app.stdout'
+  with_items:
+    - user_ldap
+    - audioplayer
+    - notes
+    - notifications
+    - calendar
+    - contacts
+    - deck
+    - gallery
+
+- meta: flush_handlers
+
+- name: Configure nextcloud
+  template:
+    src:   var/www/html/nextcloud/config/config.php
+    dest: /var/www/html/nextcloud/config/config.php
+    owner: apache
+    group: apache
+  notify:
+    - Set nextcloud admin password

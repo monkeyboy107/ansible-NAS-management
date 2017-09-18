@@ -1,0 +1,31 @@
+- name: Take backup of database
+  mysql_db:
+    login_user: root
+    login_host: localhost
+    login_password: '{{ mariadb.root.password }}'
+    state: dump
+    name:   '{{ nextcloud_db.database }}'
+    target: '/var/lib/mysql/{{ nextcloud_db.database }}-{{ ansible_date_time.epoch }}.sql'
+
+- name: Compress archive
+  archive:
+    path: '/var/lib/mysql/{{ nextcloud_db.database }}-{{ ansible_date_time.epoch }}.sql'
+    remove: True
+
+- name: Fetch backup (current)
+  fetch:
+    src:  '/var/lib/mysql/{{ nextcloud_db.database }}-{{ ansible_date_time.epoch }}.sql.gz'
+    dest: 'backup/nextcloud/{{ nextcloud_db.database }}-{{ ansible_date_time.epoch }}.sql.gz'
+    flat: yes
+
+- name: Fetch backup (latest)
+  fetch:
+    src:  '/var/lib/mysql/{{ nextcloud_db.database }}-{{ ansible_date_time.epoch }}.sql.gz'
+    dest: 'backup/nextcloud/{{ nextcloud_db.database }}-latest.sql.gz'
+    flat: yes
+
+- name: Cleanup backup
+  file:
+    path: '/var/lib/mysql/{{ nextcloud_db.database }}-{{ ansible_date_time.epoch }}.sql.gz'
+    state: absent
+

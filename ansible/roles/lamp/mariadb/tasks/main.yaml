@@ -1,0 +1,52 @@
+- include: '{{ ansible_distribution }}.yaml'
+
+- name: Setup root user
+  mysql_user:
+    name: root
+    password: '{{ mariadb.root.password }}'
+    encrypted: false
+    state: present
+  ignore_errors: true
+
+- name: Update mysql root password for all root accounts
+  mysql_user:
+    login_user: root
+    login_host: localhost
+    login_password: '{{ mariadb.root.password }}'
+    name: root
+    host: localhost
+    password: '{{ mariadb.root.password }}'
+
+- name: Update mysql root password for all root accounts
+  mysql_user:
+    login_user: root
+    login_host: localhost
+    login_password: '{{ mariadb.root.password }}'
+    name: root
+    host: '{{ item }}'
+    password: '{{ mariadb.root.password }}'
+  with_items:
+    - '{{ ansible_hostname }}'
+    - 127.0.0.1
+    - ::1
+    - '%'
+
+- name: Ensure anonymous users are not in the database
+  mysql_user:
+    login_user: root
+    login_host: localhost
+    login_password: '{{ mariadb.root.password }}'
+    name: ''
+    host: '{{ item }}'
+    state: absent
+  with_items:
+    - localhost
+    - '{{ inventory_hostname }}'
+
+- name: Remove the test database
+  mysql_db:
+    login_user: root
+    login_host: localhost
+    login_password: '{{ mariadb.root.password }}'
+    name: test
+    state: absent

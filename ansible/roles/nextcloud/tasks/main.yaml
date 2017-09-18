@@ -1,0 +1,9 @@
+- stat:
+    path: /var/www/html/nextcloud
+  register: nextcloud_src
+- include: database.yaml
+- include: install.yaml
+  when: 'not nextcloud_src.stat.isdir is defined'
+- include: configure.yaml
+- include: backup.yaml
+  when: 'backup is defined and backup'

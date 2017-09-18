@@ -1,0 +1,13 @@
+- name: Set nextcloud admin password
+  expect:
+    command: 'ncc user:resetpassword {{ nextcloud_admin.username }}'
+    responses:
+      'Enter a new password:': '{{ nextcloud_admin.password }}'
+      'Confirm the new password': '{{ nextcloud_admin.password }}'
+
+- name: Install nextcloud
+  shell: |
+    ncc maintenance:install --database \
+      'mysql' --database-name '{{ nextcloud_db.database }}'  --database-user '{{ nextcloud_db.username }}' --database-pass \
+      '{{ nextcloud_db.password }}' --admin-user '{{ nextcloud_admin.username }}' --admin-pass '{{ nextcloud_admin.password }}'
+

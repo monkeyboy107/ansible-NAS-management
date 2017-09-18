@@ -1,0 +1,6 @@
+mariadb:
+  hosts:
+    - localhost
+    - "%"
+  root:
+    password: MariaDB

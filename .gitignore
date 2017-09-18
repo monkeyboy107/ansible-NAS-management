@@ -1,2 +1,4 @@
 .idea
 *.retry
+*.sql.gz
+ansible/backup
