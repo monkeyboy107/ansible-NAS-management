@@ -1,0 +1,16 @@
+- name: Configure schemas
+  shell: |
+    FLAG=`echo "{{ item }}" | md5sum | awk '{print $1}'`
+    if [ ! -f /var/lib/ldap/${FLAG} ]
+    then
+      (ldapadd -Y EXTERNAL -H ldapi:/// -f {{ item }} && touch /var/lib/ldap/${FLAG} && echo changed) || \
+        (ldapmodify -Y EXTERNAL -H ldapi:/// -f {{ item }} && touch /var/lib/ldap/${FLAG} && echo changed)
+    fi
+  register: ldap_schema
+  changed_when: '"changed_when" in ldap_schema.stdout'
+  with_items:
+    - /etc/openldap/schema/cosine.ldif
+    - /etc/openldap/schema/nis.ldif
+    - /etc/openldap/schema/inetorgperson.ldif
+
+- include: 'ldap-{{ ldap_role }}.yaml'

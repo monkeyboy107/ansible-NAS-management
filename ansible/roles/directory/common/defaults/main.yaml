@@ -1,0 +1,34 @@
+## Deployment options
+ldap_role: master
+
+## Domain configs
+ldap_basedn:  'dc=example,dc=com'
+ldap_org:     'EXAMPLE'
+ldap_country: 'US'
+ldap_state:   'CO'
+ldap_name:    '{{ ldap_org|title }} LDAP Service'
+
+## Root configs
+ldap_rootcn:              'Manager'
+ldap_rootdn:              'cn={{ ldap_rootcn }},{{ ldap_basedn }}'
+ldap_root_password_clear: 'Password1'
+ldap_root_password_crypt: '{SSHA}RIkQ8F8jWQTGSUXVyjYEXEcS1pdTNmql'
+
+## Structure
+ldap_default_ou: 'lab'
+ldap_ous:
+  - name:   'lab'
+    parent: '{{ ldap_basedn }}'
+  - name:   'users'
+    parent: 'ou=lab,{{ ldap_basedn }}'
+  - name:   'groups'
+    parent: 'ou=lab,{{ ldap_basedn }}'
+  - name:   'hosts'
+    parent: 'ou=lab,{{ ldap_basedn }}'
+  - name:   'services'
+    parent: 'ou=lab,{{ ldap_basedn }}'
+
+## Auth params
+ldap_auth:
+  bind_dn: '{{ ldap_rootdn }}'
+  bind_pw: '{{ ldap_root_password_clear }}'

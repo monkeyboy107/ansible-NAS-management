@@ -1,0 +1,8 @@
+- name: Generate self signed cert
+  shell: >
+    openssl req -x509 -nodes -sha384 -days 3650 -newkey rsa:4096
+    -keyout /etc/ssl/certs/{{ ansible_hostname }}.key
+    -out /etc/ssl/certs/{{ ansible_hostname }}.crt
+    -subj '/C={{ ldap_country }}/ST={{ ldap_state }}/O={{ ldap_org }}/OU={{ ldap_default_ou }}/CN={{ ansible_hostname }}'
+  args:
+    creates: '/etc/ssl/certs/{{ ansible_hostname }}.crt'
