@@ -1,0 +1,12 @@
+- include: '{{ ansible_distribution }}.yaml'
+
+- name: Setup service
+  service:
+    name: slapd
+    state: started
+    enabled: true
+  notify:
+    - Wait a moment
+
+- meta: flush_handlers
+- include: 'ldap-setup.yaml'

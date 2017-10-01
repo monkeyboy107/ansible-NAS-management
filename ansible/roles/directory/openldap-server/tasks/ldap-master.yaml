@@ -1,0 +1,74 @@
+- name: Setup root user password
+  no_log: true
+  ldap_attr:
+    dn:     'olcDatabase={0}config,cn=config'
+    name:   'olcRootPW'
+    values: '{{ ldap_root_password_crypt }}'
+    state: exact
+
+- name: Set base DN
+  ldap_attr:
+    dn:     'olcDatabase={2}hdb,cn=config'
+    name:   'olcSuffix'
+    values: '{{ ldap_basedn }}'
+    state: exact
+
+- name: Set root user DN
+  no_log: true
+  ldap_attr:
+    dn: olcDatabase={2}hdb,cn=config
+    name: '{{ item.key }}'
+    values: '{{ item.value }}'
+    state: exact
+  with_dict:
+    olcRootDN: '{{ ldap_rootdn }}'
+    olcRootPW: '{{ ldap_root_password_crypt }}'
+
+- name: Set ACLs
+  ldap_attr:
+    dn: olcDatabase={2}hdb,cn=config
+    name: olcAccess
+    values:
+      - >-
+        {0}to attrs=userPassword,shadowLastChange by
+        dn="{{ ldap_rootdn }}" write by anonymous auth by self write by * none
+      - >-
+        {1}to dn.base="" by * read
+      - >-
+        {2}to * by dn="{{ ldap_rootdn }}" write by * read
+    state: exact
+
+- name: Create initial tree
+  no_log: true
+  ldap_entry:
+    params: '{{ ldap_auth }}'
+    dn: '{{ ldap_basedn }}'
+    objectClass:
+      - top
+      - dcObject
+      - organization
+    attributes:
+      description: 'Root entry for {{ ldap_name }}'
+      o: '{{ ldap_org }}'
+      dc: '{{ ldap_org|lower }}'
+
+- name: Create root user role
+  no_log: true
+  ldap_entry:
+    params: "{{ ldap_auth }}"
+    dn: '{{ ldap_rootdn }}'
+    objectClass: [organizationalRole]
+    attributes:
+      cn:          '{{ ldap_rootcn }}'
+      description: '{{ ldap_name }} - RootDN'
+
+- name: Create OUs
+  no_log: true
+  ldap_entry:
+    params: "{{ ldap_auth }}"
+    dn: 'ou={{ item.name }},{{ item.parent }}'
+    objectClass: [organizationalUnit]
+    attributes:
+      ou: '{{ item.name }}'
+  with_items: '{{ ldap_ous }}'
+

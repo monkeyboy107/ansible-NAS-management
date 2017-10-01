@@ -2,3 +2,4 @@
 *.retry
 *.sql.gz
 ansible/backup
+ansible/.facts

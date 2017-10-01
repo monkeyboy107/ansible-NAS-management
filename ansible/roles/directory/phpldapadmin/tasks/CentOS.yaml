@@ -1,0 +1,26 @@
+- name: Get timezone
+  shell: |
+    timedatectl|awk '/Time zone/{print $3}'
+  changed_when: false
+  register: tz
+
+- name: Install packages
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - phpldapadmin
+
+- name: Configure apache
+  template:
+    src: phpldapadmin.conf
+    dest: /etc/httpd/conf.d/phpldapadmin.conf
+  notify:
+    - Reload apache
+
+- name: Configure PLA
+  template:
+    src: config.php
+    dest: /etc/phpldapadmin/config.php
+  notify:
+    - Reload apache

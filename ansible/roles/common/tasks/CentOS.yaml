@@ -30,6 +30,7 @@
     - iotop
     - iftop
     - vim
+    - rsync
 
 - name: Install common python packages
   pip:

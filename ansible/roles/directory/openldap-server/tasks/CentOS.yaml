@@ -1,0 +1,10 @@
+- name: Install packages
+  package:
+    name: '{{ item }}'
+    state: present
+  with_items:
+    - openldap
+    - compat-openldap
+    - openldap-servers
+    - openldap-devel
+

@@ -24,6 +24,9 @@
     - php-ldap
     - php-process
     - php-mcrypt
+    - mod_ssl
+    - php-xml
+    - php-php-gettext
 
 - name: Configure php
   template:
@@ -37,3 +40,19 @@
     enabled: true
   with_items:
     - httpd
+
+- name: Ensure firewall is running
+  service:
+    name: firewalld
+    state: started
+    enabled: true
+
+- name: Setup firewall
+  firewalld:
+    service: '{{ item }}'
+    permanent: true
+    state: enabled
+    immediate: true
+  with_items:
+    - http
+    - https

@@ -1,4 +1,4 @@
 allow_duplicates: no
 dependencies:
-  - role: lamp/common
+  - role: directory/common
   - role: directory/x509

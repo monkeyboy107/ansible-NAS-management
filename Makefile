@@ -1,7 +1,13 @@
+PLAYCMD=ansible-playbook nas.yaml
+
 deploy:
-	@cd ansible; ansible-playbook nas.yaml
+	@cd ansible; $(PLAYCMD)
+only:
+	@cd ansible; $(PLAYCMD) --skip=always --tags=${tag}
 with-backup:
-	@cd ansible; ansible-playbook nas.yaml --extra-vars=backup
+	@cd ansible; $(PLAYCMD) --extra-vars=backup
+clean:
+	@rm -rf ansible/.facts
 edit-secrets:
 	@if [ ! -f ~/.vault_pass ]; \
 	then \
